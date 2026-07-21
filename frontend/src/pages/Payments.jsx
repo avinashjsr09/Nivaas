@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import { CreditCard, PlusCircle, CheckCircle2, Clock, Download, ArrowUpRight, ShieldCheck, Sparkles, X } from 'lucide-react';
 
 export default function Payments() {
@@ -24,8 +24,8 @@ export default function Payments() {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/payments');
-      setPayments(res.data.payments);
+      const data = await api.getPayments();
+      setPayments(data.payments);
     } catch (err) {
       console.error('Failed to fetch payments:', err);
     } finally {
@@ -37,7 +37,7 @@ export default function Payments() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:5000/api/payments/create', {
+      await api.createPaymentBill({
         title,
         amount: parseFloat(amount),
         dueDate,
@@ -59,9 +59,9 @@ export default function Payments() {
 
   const handlePayBill = async (paymentId) => {
     try {
-      const res = await axios.post(`http://localhost:5000/api/payments/${paymentId}/pay`);
+      const data = await api.payBill(paymentId);
       fetchPayments();
-      setReceipt(res.data.payment);
+      setReceipt(data.payment);
     } catch (err) {
       alert('Failed to process payment');
     }

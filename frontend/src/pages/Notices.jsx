@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import { Bell, PlusCircle, Trash2, AlertTriangle, Calendar, User, X, Sparkles } from 'lucide-react';
 
 export default function Notices() {
@@ -22,8 +22,8 @@ export default function Notices() {
   const fetchNotices = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/notices');
-      setNotices(res.data.notices);
+      const data = await api.getNotices();
+      setNotices(data.notices);
     } catch (err) {
       console.error('Failed to load notices:', err);
     } finally {
@@ -35,7 +35,7 @@ export default function Notices() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:5000/api/notices', {
+      await api.createNotice({
         title,
         content,
         priority
@@ -55,7 +55,7 @@ export default function Notices() {
   const handleDeleteNotice = async (id) => {
     if (!window.confirm('Delete this notice?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/notices/${id}`);
+      await api.deleteNotice(id);
       fetchNotices();
     } catch (err) {
       alert('Failed to delete notice');

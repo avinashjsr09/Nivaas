@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import { Users, Search, Phone, Mail, Home, Shield, CheckCircle, Clock, UserPlus } from 'lucide-react';
 
 export default function Residents() {
@@ -17,8 +17,8 @@ export default function Residents() {
   const fetchResidents = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/residents');
-      setResidents(res.data.residents);
+      const data = await api.getResidents();
+      setResidents(data.residents);
     } catch (err) {
       setError('Failed to load resident directory');
     } finally {
@@ -28,9 +28,7 @@ export default function Residents() {
 
   const handleApproveToggle = async (residentId, currentStatus) => {
     try {
-      await axios.patch(`http://localhost:5000/api/residents/${residentId}/approve`, {
-        isApproved: !currentStatus
-      });
+      await api.approveResident(residentId, !currentStatus);
       fetchResidents();
     } catch (err) {
       alert('Failed to update approval status');

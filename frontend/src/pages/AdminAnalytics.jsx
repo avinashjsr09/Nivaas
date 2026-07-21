@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import { BarChart3, TrendingUp, Users, AlertCircle, QrCode, CreditCard, Sparkles, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export default function AdminAnalytics() {
@@ -15,8 +15,8 @@ export default function AdminAnalytics() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/analytics');
-      setData(res.data);
+      const res = await api.getAnalytics();
+      setData(res);
     } catch (err) {
       console.error('Failed to load analytics:', err);
     } finally {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import { QrCode, PlusCircle, CheckCircle2, XCircle, Clock, ShieldCheck, User, Phone, X, Sparkles } from 'lucide-react';
 
 export default function Visitors() {
@@ -24,8 +24,8 @@ export default function Visitors() {
   const fetchVisitors = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/visitors');
-      setVisitors(res.data.visitors);
+      const data = await api.getVisitors();
+      setVisitors(data.visitors);
     } catch (err) {
       console.error('Failed to fetch visitors:', err);
     } finally {
@@ -37,7 +37,7 @@ export default function Visitors() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/visitors/create-pass', {
+      const data = await api.createVisitorPass({
         guestName,
         phone,
         purpose,
@@ -49,8 +49,7 @@ export default function Visitors() {
       setVisitorCount(1);
       setShowModal(false);
       fetchVisitors();
-      // Show newly created QR pass modal
-      setSelectedPass(res.data.visitor);
+      setSelectedPass(data.visitor);
     } catch (err) {
       alert('Failed to generate visitor pass');
     } finally {
@@ -60,9 +59,7 @@ export default function Visitors() {
 
   const handleStatusResponse = async (visitorId, newStatus) => {
     try {
-      await axios.patch(`http://localhost:5000/api/visitors/${visitorId}/status`, {
-        status: newStatus
-      });
+      await api.updateVisitorStatus(visitorId, newStatus);
       fetchVisitors();
     } catch (err) {
       alert('Failed to update approval');
@@ -120,8 +117,8 @@ export default function Visitors() {
             {visitors.filter(v => v.status === 'PENDING').map(pending => (
               <div key={pending.id} className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex items-center justify-between gap-3">
                 <div>
-                  <div className="font-bold text-slate-100 text-xs">{pending.guestName}</div>
-                  <div className="text-[11px] text-slate-400">{pending.purpose} • {pending.visitorCount} Person(s)</div>
+                  <div className="font-bold text-slate-100 text-xs">{pending.guestName || pending.guest_name}</div>
+                  <div className="text-[11px] text-slate-400">{pending.purpose} • {pending.visitorCount || pending.visitor_count || 1} Person(s)</div>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <button

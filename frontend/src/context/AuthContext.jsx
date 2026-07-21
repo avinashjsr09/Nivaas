@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { api } from '../api/client';
 
 const AuthContext = createContext();
 
@@ -10,7 +9,6 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('nivaas_token') || '');
   const [loading, setLoading] = useState(true);
 
-  // Set default auth header for axios
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } else {
@@ -28,8 +26,8 @@ export function AuthProvider({ children }) {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/auth/me`);
-      setUser(res.data.user);
+      const data = await api.getMe();
+      setUser(data.user);
     } catch (err) {
       console.error('Failed to fetch user session:', err);
       logout();
@@ -39,8 +37,8 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
-    const res = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
-    const { token: authToken, user: userData } = res.data;
+    const data = await api.login(email, password);
+    const { token: authToken, user: userData } = data;
     localStorage.setItem('nivaas_token', authToken);
     setToken(authToken);
     setUser(userData);
@@ -48,8 +46,8 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (formData) => {
-    const res = await axios.post(`${API_BASE_URL}/auth/register`, formData);
-    const { token: authToken, user: userData } = res.data;
+    const data = await api.register(formData);
+    const { token: authToken, user: userData } = data;
     localStorage.setItem('nivaas_token', authToken);
     setToken(authToken);
     setUser(userData);
@@ -58,6 +56,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('nivaas_token');
+    localStorage.removeItem('nivaas_current_user');
     setToken('');
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];

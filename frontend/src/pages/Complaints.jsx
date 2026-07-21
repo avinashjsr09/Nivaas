@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import {
   AlertCircle,
   PlusCircle,
@@ -38,8 +38,8 @@ export default function Complaints() {
   const fetchComplaints = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/complaints');
-      setComplaints(res.data.complaints);
+      const data = await api.getComplaints();
+      setComplaints(data.complaints);
     } catch (err) {
       console.error('Failed to load complaints:', err);
     } finally {
@@ -51,7 +51,7 @@ export default function Complaints() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:5000/api/complaints', {
+      await api.createComplaint({
         title,
         description,
         category,
@@ -72,9 +72,7 @@ export default function Complaints() {
 
   const handleStatusUpdate = async (complaintId, newStatus) => {
     try {
-      await axios.patch(`http://localhost:5000/api/complaints/${complaintId}/status`, {
-        status: newStatus
-      });
+      await api.updateComplaintStatus(complaintId, newStatus);
       fetchComplaints();
     } catch (err) {
       alert('Failed to update status');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import { ShieldCheck, QrCode, PlusCircle, CheckCircle, XCircle, LogOut, Search, Clock, Home, Sparkles } from 'lucide-react';
 
 export default function SecurityDashboard() {
@@ -26,8 +26,8 @@ export default function SecurityDashboard() {
   const fetchVisitors = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/visitors');
-      setVisitors(res.data.visitors);
+      const data = await api.getVisitors();
+      setVisitors(data.visitors);
     } catch (err) {
       console.error('Failed to fetch gate logs:', err);
     } finally {
@@ -43,8 +43,8 @@ export default function SecurityDashboard() {
     setQrResult(null);
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/visitors/verify/${qrQuery.trim()}`);
-      setQrResult(res.data);
+      const data = await api.verifyQrCode(qrQuery);
+      setQrResult(data);
     } catch (err) {
       setQrResult({ valid: false, error: err.response?.data?.error || 'Invalid QR Pass' });
     } finally {
@@ -52,13 +52,13 @@ export default function SecurityDashboard() {
     }
   };
 
-  // Log Gate Entry Request (Security triggers request to Resident)
+  // Log Gate Entry Request
   const handleLogVisitor = async (e) => {
     e.preventDefault();
     setLogging(true);
 
     try {
-      await axios.post('http://localhost:5000/api/visitors/create-pass', {
+      await api.createVisitorPass({
         guestName,
         flatNumber,
         phone,
@@ -81,7 +81,7 @@ export default function SecurityDashboard() {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      await axios.patch(`http://localhost:5000/api/visitors/${id}/status`, { status });
+      await api.updateVisitorStatus(id, status);
       fetchVisitors();
     } catch (err) {
       alert('Failed to update status');
@@ -142,7 +142,7 @@ export default function SecurityDashboard() {
                       <CheckCircle className="w-4 h-4" /> VERIFIED VALID PASS
                     </div>
                     <div className="space-y-1 text-[11px]">
-                      <div>Guest: <span className="font-bold text-white">{qrResult.visitor.guest_name}</span></div>
+                      <div>Guest: <span className="font-bold text-white">{qrResult.visitor.guest_name || qrResult.visitor.guestName}</span></div>
                       <div>Host Flat: <span className="font-bold text-white">Flat {qrResult.visitor.flat_number || 'Resident'}</span></div>
                       <div>Status: <span className="font-bold text-sky-300">{qrResult.visitor.status}</span></div>
                     </div>
