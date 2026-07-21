@@ -14,6 +14,8 @@ import Complaints from './pages/Complaints';
 import Notices from './pages/Notices';
 import Visitors from './pages/Visitors';
 import SecurityDashboard from './pages/SecurityDashboard';
+import Payments from './pages/Payments';
+import AdminAnalytics from './pages/AdminAnalytics';
 
 function MainLayout({ children }) {
   return (
@@ -95,6 +97,26 @@ export default function App() {
               <ProtectedRoute allowedRoles={['SECURITY', 'ADMIN']}>
                 <MainLayout>
                   <SecurityDashboard />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'RESIDENT']}>
+                <MainLayout>
+                  <Payments />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <MainLayout>
+                  <AdminAnalytics />
                 </MainLayout>
               </ProtectedRoute>
             }

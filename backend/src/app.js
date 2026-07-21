@@ -8,6 +8,8 @@ const residentRoutes = require('./routes/residentRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
 const visitorRoutes = require('./routes/visitorRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.use('/api/residents', residentRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/visitors', visitorRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
