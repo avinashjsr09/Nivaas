@@ -12,24 +12,30 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const performLogin = async (targetEmail, targetPassword) => {
     setError('');
     setLoading(true);
 
     try {
-      await login(email, password);
+      await login(targetEmail, targetPassword);
       navigate('/dashboard');
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data?.error || 'Login failed. Please check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDemoFill = (demoEmail, demoPassword) => {
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    performLogin(email, password);
+  };
+
+  const handleDemoFillAndLogin = (demoEmail, demoPassword) => {
     setEmail(demoEmail);
     setPassword(demoPassword);
+    performLogin(demoEmail, demoPassword);
   };
 
   return (
@@ -52,32 +58,32 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Demo Quick Fill Buttons */}
+        {/* Demo Quick Fill & Instant Login Buttons */}
         <div className="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
           <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Quick Demo One-Click Login:
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Quick Demo One-Click Instant Login:
           </div>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
-              onClick={() => handleDemoFill('admin@nivaas.com', 'password123')}
-              className="px-2.5 py-2 text-xs font-medium bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-xl transition-all"
+              onClick={() => handleDemoFillAndLogin('admin@nivaas.com', 'password123')}
+              className="px-2.5 py-2.5 text-xs font-bold bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 rounded-xl transition-all shadow hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1"
             >
-              👑 Secretary
+              <span>👑 Secretary</span>
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('resident@nivaas.com', 'password123')}
-              className="px-2.5 py-2 text-xs font-medium bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-xl transition-all"
+              onClick={() => handleDemoFillAndLogin('resident@nivaas.com', 'password123')}
+              className="px-2.5 py-2.5 text-xs font-bold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-xl transition-all shadow hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1"
             >
-              🏡 Resident
+              <span>🏡 Resident</span>
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('security@nivaas.com', 'password123')}
-              className="px-2.5 py-2 text-xs font-medium bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-xl transition-all"
+              onClick={() => handleDemoFillAndLogin('security@nivaas.com', 'password123')}
+              className="px-2.5 py-2.5 text-xs font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-xl transition-all shadow hover:scale-105 active:scale-95 flex flex-col items-center justify-center gap-1"
             >
-              🛡️ Security
+              <span>🛡️ Security</span>
             </button>
           </div>
         </div>
@@ -90,7 +96,7 @@ export default function Login() {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                 Email Address
@@ -101,7 +107,7 @@ export default function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@nivaas.com"
+                  placeholder="admin@nivaas.com"
                   required
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm transition-all"
                 />
