@@ -12,6 +12,8 @@ import Dashboard from './pages/Dashboard';
 import Residents from './pages/Residents';
 import Complaints from './pages/Complaints';
 import Notices from './pages/Notices';
+import Visitors from './pages/Visitors';
+import SecurityDashboard from './pages/SecurityDashboard';
 
 function MainLayout({ children }) {
   return (
@@ -73,6 +75,26 @@ export default function App() {
               <ProtectedRoute allowedRoles={['ADMIN', 'RESIDENT', 'SECURITY']}>
                 <MainLayout>
                   <Notices />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/visitors"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'RESIDENT']}>
+                <MainLayout>
+                  <Visitors />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/security-gate"
+            element={
+              <ProtectedRoute allowedRoles={['SECURITY', 'ADMIN']}>
+                <MainLayout>
+                  <SecurityDashboard />
                 </MainLayout>
               </ProtectedRoute>
             }

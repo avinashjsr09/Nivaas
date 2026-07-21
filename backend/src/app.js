@@ -7,6 +7,7 @@ const societyRoutes = require('./routes/societyRoutes');
 const residentRoutes = require('./routes/residentRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
+const visitorRoutes = require('./routes/visitorRoutes');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/api/societies', societyRoutes);
 app.use('/api/residents', residentRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/notices', noticeRoutes);
+app.use('/api/visitors', visitorRoutes);
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
