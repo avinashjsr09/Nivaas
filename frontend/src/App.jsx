@@ -9,6 +9,9 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Residents from './pages/Residents';
+import Complaints from './pages/Complaints';
+import Notices from './pages/Notices';
 
 function MainLayout({ children }) {
   return (
@@ -40,6 +43,36 @@ export default function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <Dashboard />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/residents"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'RESIDENT']}>
+                <MainLayout>
+                  <Residents />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/complaints"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'RESIDENT']}>
+                <MainLayout>
+                  <Complaints />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notices"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'RESIDENT', 'SECURITY']}>
+                <MainLayout>
+                  <Notices />
                 </MainLayout>
               </ProtectedRoute>
             }
